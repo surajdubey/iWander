@@ -116,4 +116,35 @@ public class ApiConnector {
         }
     }
 
+    public JSONArray fetchLocationDetails(String username)
+    {
+        JSONArray jsonArray = new JSONArray();
+        try {
+            url = Utility.BASE_URL+"fetchLocationDetails.php";
+            httpClient = new DefaultHttpClient();
+            httpPost = new HttpPost(url);
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+            nameValuePairs.add(new BasicNameValuePair("username" , username));
+            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            httpResponse = httpClient.execute(httpPost);
+            responseText = EntityUtils.toString(httpResponse.getEntity());
+            Log.e("ECurrency", responseText);
+            //responseText = responseText.substring(0,20);
+            jsonArray = new JSONArray(responseText);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+
+        }
+
+        return jsonArray;
+
+
+    }
+
+
+
 }

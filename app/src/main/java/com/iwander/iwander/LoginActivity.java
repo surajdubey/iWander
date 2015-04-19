@@ -48,10 +48,18 @@ public class LoginActivity extends ActionBarActivity {
         sharedPreferences = getSharedPreferences("iwander", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
-        if(sharedPreferences.getString("isLogged", "").equals("true"))
+        if(sharedPreferences.getString("isLoggedIn", "").equals("true"))
         {
-            startActivity(new Intent(getApplicationContext(), TempActivity.class));
-            finish();
+            if(sharedPreferences.getString("userType","").equals("Caretaker"))
+            {
+                startActivity(new Intent(getApplicationContext(), DisplayLoationActivity.class));
+                finish();
+            }
+            else
+            {
+                startActivity(new Intent(getApplicationContext(), TempActivity.class));
+                finish();
+            }
 
         }
 
@@ -211,8 +219,18 @@ public class LoginActivity extends ActionBarActivity {
             editor.putString("username" , username);
             editor.putString("userType", userType);
             editor.commit();
-            startActivity(new Intent(context , TempActivity.class));
-            finish();
+
+            if(userType.equals("Caretaker"))
+            {
+                startActivity(new Intent(context , DisplayLoationActivity.class));
+                finish();
+
+            }
+            else
+            {
+                startActivity(new Intent(context, TempActivity.class));
+                finish();
+            }
         }
         else
         {
