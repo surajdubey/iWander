@@ -46,12 +46,12 @@ public class LoginActivity extends ActionBarActivity {
 
         sharedPreferences = getSharedPreferences("iwander", Context.MODE_PRIVATE);
 
-        if(sharedPreferences.getString("isLogged", "").equals("true"))
+        /*if(sharedPreferences.getString("isLogged", "").equals("true"))
         {
             startActivity(new Intent(getApplicationContext(), TempActivity.class));
             finish();
 
-        }
+        }*/
 
         radioPatient = (RadioButton) findViewById(R.id.radioPatient);
         radioCaretaker = (RadioButton) findViewById(R.id.radioCaretaker);
@@ -61,6 +61,8 @@ public class LoginActivity extends ActionBarActivity {
 
         btnRegister = (Button) findViewById(R.id.btnRegister);
         btnLogin = (Button) findViewById(R.id.btnSubmit);
+
+        /*
         //STARTS HERE
 
         int resofAlgo1=0,resofAlgo2=0;
@@ -167,6 +169,8 @@ public class LoginActivity extends ActionBarActivity {
         }
 
         //ENDS HERE
+        */
+
         radioPatient.setChecked(true);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {

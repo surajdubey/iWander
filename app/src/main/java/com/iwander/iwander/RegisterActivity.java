@@ -161,7 +161,7 @@ public class RegisterActivity extends ActionBarActivity {
     private void checkResult(String result)
     {
         Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-        if(result.equals("Success"))
+        /*if(result.equals("Success"))
         {
             editor.putString("username", username);
             editor.putString("isLogged", "true");
@@ -174,7 +174,7 @@ public class RegisterActivity extends ActionBarActivity {
         else
         {
             Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-        }
+        }*/
 
     }
 
