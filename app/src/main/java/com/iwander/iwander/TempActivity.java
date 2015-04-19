@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -22,6 +23,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 public class TempActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -42,8 +45,12 @@ com.google.android.gms.location.LocationListener
     EditText etRadius;
     Button btnSave;
 
+    int locationInterval = 30000;
+
     double longitude;
     double latitude;
+
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +63,9 @@ com.google.android.gms.location.LocationListener
 
         sharedPreferences = getSharedPreferences("iwander", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        username = sharedPreferences.getString("username", "");
+
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -67,8 +77,8 @@ com.google.android.gms.location.LocationListener
             public void onClick(View v) {
                 editor.putString("radius",etRadius.getText().toString());
                 editor.commit();
-                startService(new Intent(getBaseContext(), BackGroundAction.class));
-                finish();
+                //startService(new Intent(getBaseContext(), BackGroundAction.class));
+                //finish();
 
             }
         });
@@ -191,7 +201,7 @@ com.google.android.gms.location.LocationListener
     public void onConnected(Bundle bundle) {
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000); // Update location every second
+        locationRequest.setInterval(locationInterval); // Update location every second
 
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
     }
@@ -209,6 +219,12 @@ com.google.android.gms.location.LocationListener
 
         editor.putString("latitude", String.valueOf(latitude));
         editor.putString("longitude", String.valueOf(longitude));
+
+        Toast.makeText(context, longitude+" "+latitude, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "uploading data", Toast.LENGTH_SHORT).show();
+
+        new UploadAsync().execute(new ApiConnector());
+
         editor.commit();
 
     }
@@ -252,5 +268,27 @@ com.google.android.gms.location.LocationListener
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class UploadAsync extends AsyncTask<ApiConnector, Void, String>
+    {
+        @Override
+        protected String doInBackground(ApiConnector... apiConnectors) {
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd:MMMM:yyyy HH:mm:ss");
+            String strDate = sdf.format(c.getTime());
+
+            return apiConnectors[0].uploadData(String.valueOf(longitude), String.valueOf(latitude), username, strDate);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            checkResult(s);
+        }
+    }
+
+    private void checkResult(String s)
+    {
+       Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
 }

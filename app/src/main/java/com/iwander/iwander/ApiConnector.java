@@ -87,22 +87,24 @@ public class ApiConnector {
 
     }
 
-    public String uploadData(String longitude, String latitude, String username)
+    public String uploadData(String longitude, String latitude, String username, String time)
     {
         try {
             String urlData = "http://maps.google.com/?q="+latitude+","+longitude;
-            url = Utility.BASE_URL+"uploadData.php";
+            url = Utility.BASE_URL+"setLocation.php";
             httpClient = new DefaultHttpClient();
             httpPost = new HttpPost(url);
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
-            nameValuePairs.add(new BasicNameValuePair("urlData" , urlData));
+            nameValuePairs.add(new BasicNameValuePair("longitude" , longitude));
+            nameValuePairs.add(new BasicNameValuePair("latitude" , latitude));
             nameValuePairs.add(new BasicNameValuePair("username" , username));
+            nameValuePairs.add(new BasicNameValuePair("time" , time));
+
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             httpResponse = httpClient.execute(httpPost);
             responseText = EntityUtils.toString(httpResponse.getEntity());
-            Log.e("ECurrency", responseText);
-            //responseText = responseText.substring(0,20);
+             //responseText = responseText.substring(0,20);
             JSONObject jobject = new JSONObject(responseText);
             responseText = jobject.getString("message");
             return responseText;

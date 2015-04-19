@@ -38,6 +38,7 @@ public class LoginActivity extends ActionBarActivity {
     RadioButton radioCaretaker;
 
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +46,14 @@ public class LoginActivity extends ActionBarActivity {
         setContentView(R.layout.activity_login);
 
         sharedPreferences = getSharedPreferences("iwander", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
-        /*if(sharedPreferences.getString("isLogged", "").equals("true"))
+        if(sharedPreferences.getString("isLogged", "").equals("true"))
         {
             startActivity(new Intent(getApplicationContext(), TempActivity.class));
             finish();
 
-        }*/
+        }
 
         radioPatient = (RadioButton) findViewById(R.id.radioPatient);
         radioCaretaker = (RadioButton) findViewById(R.id.radioCaretaker);
@@ -201,21 +203,21 @@ public class LoginActivity extends ActionBarActivity {
 
     private void checkResult(String result)
     {
-        /*if(result.equals("Success"))
+        if(result.equals("Success"))
         {
             editor= sharedPreferences.edit();
             editor = sharedPreferences.edit();
             editor.putString("isLoggedIn" , "true");
             editor.putString("username" , username);
+            editor.putString("userType", userType);
             editor.commit();
-            startActivity(new Intent(context , WelcomeActivity.class));
+            startActivity(new Intent(context , TempActivity.class));
             finish();
         }
         else
         {
             Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-        }*/
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        }
 
     }
 
