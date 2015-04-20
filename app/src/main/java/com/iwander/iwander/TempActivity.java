@@ -3,6 +3,10 @@ package com.iwander.iwander;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -29,7 +33,7 @@ import java.util.Calendar;
 
 public class TempActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
 GoogleApiClient.OnConnectionFailedListener,
-com.google.android.gms.location.LocationListener
+com.google.android.gms.location.LocationListener, SensorEventListener
 {
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
@@ -51,6 +55,16 @@ com.google.android.gms.location.LocationListener
     double latitude;
 
     String username;
+
+    // accelerometer variables
+    private SensorManager sensorMan;
+    private Sensor accelerometer;
+
+    private float[] mGravity;
+    private float mAccel;
+    private float mAccelCurrent;
+    private float mAccelLast;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +209,17 @@ com.google.android.gms.location.LocationListener
         }
         */
         //ENDS HERE
+
+
+        sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
+
+
+        //sensorMan.registerListener(this, accelerometer,
+                //SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
@@ -213,6 +238,7 @@ com.google.android.gms.location.LocationListener
 
     @Override
     public void onLocationChanged(Location location) {
+
         //Toast.makeText(context, location.toString(), Toast.LENGTH_SHORT).show();
         latitude = location.getLatitude();
         longitude = location.getLongitude();
@@ -223,9 +249,32 @@ com.google.android.gms.location.LocationListener
         Toast.makeText(context, longitude+" "+latitude, Toast.LENGTH_SHORT).show();
         Toast.makeText(context, "uploading data", Toast.LENGTH_SHORT).show();
 
-        new UploadAsync().execute(new ApiConnector());
+        //new UploadAsync().execute(new ApiConnector());
 
         editor.commit();
+
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            /*mGravity = event.values.clone();
+            // Shake detection
+            float x = mGravity[0];
+            float y = mGravity[1];
+            float z = mGravity[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = FloatMath.sqrt(x*x + y*y + z*z);
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+            // Make this higher or lower according to how much
+            // motion you want to detect
+            if(mAccel > 3){
+                // do something
+            }*/
+            Toast.makeText(context,"Phone is moving", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -290,5 +339,21 @@ com.google.android.gms.location.LocationListener
     private void checkResult(String s)
     {
        Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorMan.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        sensorMan.unregisterListener(this);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
     }
 }
