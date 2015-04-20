@@ -239,8 +239,6 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
-
-
     private class LoginAsync extends AsyncTask<ApiConnector, Void, String>
     {
         ProgressDialog pd;
