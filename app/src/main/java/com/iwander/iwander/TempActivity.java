@@ -49,7 +49,7 @@ com.google.android.gms.location.LocationListener, SensorEventListener
     EditText etRadius;
     Button btnSave;
 
-    int locationInterval = 30000;
+    int locationInterval = 10000;
 
     double longitude;
     double latitude;
@@ -91,8 +91,8 @@ com.google.android.gms.location.LocationListener, SensorEventListener
             public void onClick(View v) {
                 editor.putString("radius",etRadius.getText().toString());
                 editor.commit();
-                //startService(new Intent(getBaseContext(), BackGroundAction.class));
-                //finish();
+                startService(new Intent(getBaseContext(), BackGroundAction.class));
+                finish();
 
             }
         });
@@ -249,7 +249,7 @@ com.google.android.gms.location.LocationListener, SensorEventListener
         Toast.makeText(context, longitude+" "+latitude, Toast.LENGTH_SHORT).show();
         Toast.makeText(context, "uploading data", Toast.LENGTH_SHORT).show();
 
-        //new UploadAsync().execute(new ApiConnector());
+        new UploadAsync().execute(new ApiConnector());
 
         editor.commit();
 
@@ -259,11 +259,14 @@ com.google.android.gms.location.LocationListener, SensorEventListener
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+
+
             /*mGravity = event.values.clone();
             // Shake detection
             float x = mGravity[0];
             float y = mGravity[1];
             float z = mGravity[2];
+
             mAccelLast = mAccelCurrent;
             mAccelCurrent = FloatMath.sqrt(x*x + y*y + z*z);
             float delta = mAccelCurrent - mAccelLast;
@@ -273,7 +276,7 @@ com.google.android.gms.location.LocationListener, SensorEventListener
             if(mAccel > 3){
                 // do something
             }*/
-            Toast.makeText(context,"Phone is moving", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(context,"Phone is moving", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -319,7 +322,7 @@ com.google.android.gms.location.LocationListener, SensorEventListener
         return super.onOptionsItemSelected(item);
     }
 
-    private class UploadAsync extends AsyncTask<ApiConnector, Void, String>
+    public class UploadAsync extends AsyncTask<ApiConnector, Void, String>
     {
         @Override
         protected String doInBackground(ApiConnector... apiConnectors) {
@@ -327,7 +330,7 @@ com.google.android.gms.location.LocationListener, SensorEventListener
             SimpleDateFormat sdf = new SimpleDateFormat("dd:MMMM:yyyy HH:mm:ss");
             String strDate = sdf.format(c.getTime());
 
-            return apiConnectors[0].uploadData(String.valueOf(longitude), String.valueOf(latitude), username, strDate);
+            return apiConnectors[0].uploadData(String.valueOf(longitude), String.valueOf(latitude), username, strDate,false);
         }
 
         @Override

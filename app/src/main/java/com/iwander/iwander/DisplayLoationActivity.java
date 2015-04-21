@@ -62,16 +62,8 @@ public class DisplayLoationActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            SharedPreferences.Editor editor = getSharedPreferences("iwander", Context.MODE_PRIVATE).edit();
-
-            editor.putString("isLoggedIn" , "");
-            editor.putString("username" , "");
-            editor.putString("userType", "");
-            editor.commit();
-
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-            finish();
+        if (id == R.id.action_settings) {
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -146,6 +138,9 @@ public class DisplayLoationActivity extends ActionBarActivity {
                e.printStackTrace();
 
             }
+
         }
+
+
     }
 }

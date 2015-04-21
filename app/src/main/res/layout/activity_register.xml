@@ -110,6 +110,7 @@
         android:id="@+id/btnSubmit"
         android:text="Register"
         android:padding="20dp"
+        android:background="@android:color/holo_blue_bright"
         />
 
 

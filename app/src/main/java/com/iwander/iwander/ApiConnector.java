@@ -87,7 +87,7 @@ public class ApiConnector {
 
     }
 
-    public String uploadData(String longitude, String latitude, String username, String time)
+    public String uploadData(String longitude, String latitude, String username, String time, boolean hasUserCrossed)
     {
         try {
             String urlData = "http://maps.google.com/?q="+latitude+","+longitude;
@@ -100,6 +100,7 @@ public class ApiConnector {
             nameValuePairs.add(new BasicNameValuePair("latitude" , latitude));
             nameValuePairs.add(new BasicNameValuePair("username" , username));
             nameValuePairs.add(new BasicNameValuePair("time" , time));
+            nameValuePairs.add(new BasicNameValuePair("hasUserCrossed", String.valueOf(hasUserCrossed)));
 
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             httpResponse = httpClient.execute(httpPost);
