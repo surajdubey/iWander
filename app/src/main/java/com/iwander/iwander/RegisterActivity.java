@@ -16,6 +16,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 
 public class RegisterActivity extends ActionBarActivity {
 
@@ -49,6 +51,10 @@ public class RegisterActivity extends ActionBarActivity {
 
     SharedPreferences sharedPreferences;
 
+    GoogleCloudMessaging gcm;
+
+    String regId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +78,8 @@ public class RegisterActivity extends ActionBarActivity {
         radioLow = (RadioButton) findViewById(R.id.radioLow);
         radioMedium = (RadioButton) findViewById(R.id.radioMedium);
         radioHigh = (RadioButton) findViewById(R.id.radioHigh);
+
+        regId = sharedPreferences.getString(Utility.PROPERTY_REG_ID, "");
 
 
         rgUserType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -147,7 +155,7 @@ public class RegisterActivity extends ActionBarActivity {
 
         @Override
         protected String doInBackground(ApiConnector... params) {
-            return params[0].registerUser(username, password, userType, age, dementiaLevel, phone);
+            return params[0].registerUser(username, password, userType, age, dementiaLevel, phone, regId);
 
         }
 
@@ -202,4 +210,5 @@ public class RegisterActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-}
+
+    }

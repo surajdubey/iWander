@@ -8,6 +8,7 @@ $username = $_POST['username'];
 $longitude = $_POST['longitude'];
 $latitude = $_POST['latitude'];
 $time = $_POST["time"];
+$hasUserCrossed = $_POST["hasUserCrossed"];
 
 $sql="SELECT * FROM users WHERE username = '$username' AND userType = 'Patient'";
 $query = $pdo->prepare($sql);
@@ -15,7 +16,7 @@ $query->execute();
 $row = $query->fetch(PDO::FETCH_ASSOC);
 $user_id = $row["user_id"];
 
-$sql="INSERT INTO location VALUES ('$user_id', '$longitude', '$latitude', '$time')";
+$sql="INSERT INTO location VALUES ('$user_id', '$longitude', '$latitude', '$time', '$hasUserCrossed')";
 $query = $pdo->prepare($sql);
 	if($query->execute())
 	{

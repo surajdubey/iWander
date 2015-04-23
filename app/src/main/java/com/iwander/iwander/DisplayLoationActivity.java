@@ -42,8 +42,6 @@ public class DisplayLoationActivity extends ActionBarActivity {
 
         new FetchlocationAsync().execute(new ApiConnector());
 
-
-
     }
 
 

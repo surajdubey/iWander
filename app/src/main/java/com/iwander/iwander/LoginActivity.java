@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import java.io.IOException;
 
 
@@ -40,6 +42,10 @@ public class LoginActivity extends ActionBarActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
+    GoogleCloudMessaging gcm;
+
+    String regId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +53,10 @@ public class LoginActivity extends ActionBarActivity {
 
         sharedPreferences = getSharedPreferences("iwander", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        gcm = GoogleCloudMessaging.getInstance(this);
+        regId = getRegistrationId(context);
+
 
         if(sharedPreferences.getString("isLoggedIn", "").equals("true"))
         {
@@ -208,13 +218,37 @@ public class LoginActivity extends ActionBarActivity {
 
     }
 
+    public String getRegistrationId(Context context)
+    {
+        String registrationId = sharedPreferences.getString(Utility.PROPERTY_REG_ID, "");
+        if(registrationId.isEmpty())
+        {
+            new GenerateGCM().execute();
+            return "";
+        }
+        return registrationId;
+
+    }
+
 
     private void checkResult(String result)
     {
         if(result.equals("Success"))
         {
+           new UpdateGcm().execute(new ApiConnector());
+        }
+        else
+        {
+            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void checkFinalResult(String result)
+    {
+        if(result.equals("Success"))
+        {
             editor= sharedPreferences.edit();
-            editor = sharedPreferences.edit();
             editor.putString("isLoggedIn" , "true");
             editor.putString("username" , username);
             editor.putString("userType", userType);
@@ -240,6 +274,70 @@ public class LoginActivity extends ActionBarActivity {
     }
 
 
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_login, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class GenerateGCM extends AsyncTask<Void, Void, String>
+    {
+        ProgressDialog pd;
+        @Override
+        protected void onPreExecute() {
+            pd= new ProgressDialog(context);
+            pd.setMessage("Please Wait");
+            pd.setCancelable(false);
+            pd.setIndeterminate(false);
+            pd.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try{
+                if(gcm == null)
+                {
+                    gcm = GoogleCloudMessaging.getInstance(context);
+                }
+
+                regId = gcm.register(Utility.SENDER_ID);
+                return regId;
+
+            }
+
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String regId) {
+            pd.dismiss();
+            storeReg(regId);
+        }
+    }
 
     private class LoginAsync extends AsyncTask<ApiConnector, Void, String>
     {
@@ -267,25 +365,43 @@ public class LoginActivity extends ActionBarActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private class UpdateGcm extends AsyncTask<ApiConnector, Void, String>
+    {
+        ProgressDialog pd;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        @Override
+        protected void onPreExecute() {
+            pd= new ProgressDialog(context);
+            pd.setMessage("Updating GCM");
+            pd.setCancelable(false);
+            pd.setIndeterminate(false);
+            pd.show();
         }
 
-        return super.onOptionsItemSelected(item);
+        @Override
+        protected String doInBackground(ApiConnector... params) {
+            return params[0].updateGcm(username, userType, regId);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            pd.dismiss();
+            checkFinalResult(s);
+
+        }
+
     }
+
+    private void storeReg(String regId)
+    {
+        this.regId = regId;
+        editor.putString(Utility.PROPERTY_REG_ID, regId);
+        editor.commit();
+
+        Toast.makeText(context, "Reg is "+regId, Toast.LENGTH_SHORT).show();
+
+    }
+
+
 }

@@ -26,7 +26,7 @@ public class ApiConnector {
     HttpResponse httpResponse;
     String responseText;
 
-    public String registerUser(String username, String password, String userType, String age, String demetiaLevel, String phone)
+    public String registerUser(String username, String password, String userType, String age, String demetiaLevel, String phone, String regId)
     {
         try {
             url = Utility.BASE_URL+"register.php";
@@ -39,6 +39,8 @@ public class ApiConnector {
             nameValuePairs.add(new BasicNameValuePair("age" , age));
             nameValuePairs.add(new BasicNameValuePair("dementiaLevel" , demetiaLevel));
             nameValuePairs.add(new BasicNameValuePair("phone" ,phone));
+            nameValuePairs.add(new BasicNameValuePair("gcm_id" ,regId));
+
 
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             httpResponse = httpClient.execute(httpPost);
@@ -145,6 +147,65 @@ public class ApiConnector {
 
 
     }
+
+    public String updateGcm(String username, String userType, String regId)
+    {
+        try {
+            url = Utility.BASE_URL+"updateGcm.php";
+            httpClient = new DefaultHttpClient();
+            httpPost = new HttpPost(url);
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("username" , username));
+            nameValuePairs.add(new BasicNameValuePair("userType" , userType));
+            nameValuePairs.add(new BasicNameValuePair("gcm_id" ,regId));
+
+            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            httpResponse = httpClient.execute(httpPost);
+            responseText = EntityUtils.toString(httpResponse.getEntity());
+
+            Log.d("ECurrency", responseText);
+            //responseText = responseText.substring(0,20);
+            JSONObject jobject = new JSONObject(responseText);
+            responseText = jobject.getString("message");
+            return responseText;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+
+
+    }
+
+    public String sendAlert(String longitude, String latitude, String username)
+    {
+        try {
+            url = Utility.BASE_URL+"sendLocationAlert.php";
+            httpClient = new DefaultHttpClient();
+            httpPost = new HttpPost(url);
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("longitude" , longitude));
+            nameValuePairs.add(new BasicNameValuePair("latitude" , latitude));
+            nameValuePairs.add(new BasicNameValuePair("username" ,username));
+
+            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            httpResponse = httpClient.execute(httpPost);
+            responseText = EntityUtils.toString(httpResponse.getEntity());
+
+            Log.d("ECurrency", responseText);
+            //responseText = responseText.substring(0,20);
+            JSONObject jobject = new JSONObject(responseText);
+            responseText = jobject.getString("message");
+            return responseText;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+
 
 
 
