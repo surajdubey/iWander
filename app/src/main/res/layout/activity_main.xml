@@ -68,7 +68,29 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="74dp"
         android:text="Save"
-        android:background="@android:color/holo_blue_bright"
+        android:background="@android:color/holo_red_dark"
+
+        />
+
+    ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/alert"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/btnSave"
+        android:layout_alignEnd="@+id/btnSave" />
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etContact"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="174dp"
+        android:text="Register"
+        android:background="@android:color/holo_green_dark"
+
         />
 
 </RelativeLayout>

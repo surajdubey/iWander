@@ -206,6 +206,30 @@ public class ApiConnector {
         }
     }
 
+    public void sendAlert(String longitude, String latitude, String username)
+    {
+        try {
+            url = Utility.BASE_URL+"sendNotification.php";
+            httpClient = new DefaultHttpClient();
+            httpPost = new HttpPost(url);
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("longitude" , longitude));
+            nameValuePairs.add(new BasicNameValuePair("latitude" , latitude));
+            nameValuePairs.add(new BasicNameValuePair("username" ,username));
+
+            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            httpResponse = httpClient.execute(httpPost);
+            responseText = EntityUtils.toString(httpResponse.getEntity());
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 
 

@@ -6,7 +6,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity"
+    android:background="@android:color/holo_green_light"
+    >
 
     <CheckBox
         android:id="@+id/cbLocation"
@@ -25,6 +27,7 @@
         android:layout_below="@+id/cbLocation"
         android:layout_marginTop="26dp"
         android:text="Radius"
+
 
         />
 
@@ -48,6 +51,8 @@
         android:layout_marginTop="44dp"
         android:text="Save"
         android:layout_below="@+id/etRadius"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/holo_red_dark"
+        />
 
 </RelativeLayout>
